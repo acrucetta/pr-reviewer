@@ -18,10 +18,13 @@ import subprocess
 
 def main(curr_branch : str, compare_branch : str):
     diffs = subprocess.run(f"git diff {curr_branch}..{compare_branch}", shell=True, capture_output=True)
-    print(diffs)
+    print(diffs.stdout)
     return ""
 
 if __name__ == "__main__":
-    args = sys.argv[1:]
+    # args = sys.argv[1:]
+    args=["test","test"]
+    args[0]="test-branch"
+    args[1]="main"
     main(args[0],args[1])
 
