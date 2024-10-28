@@ -20,4 +20,4 @@ def create_pr_description(diff: str, repo_name: str, branch_name: str):
             }
         ],
     )
-    return message.content
+    return message.content[0].text

@@ -14,6 +14,7 @@ def main(compare_branch, api_key):
         repo_name = get_repo_name()
         diff = get_diff(curr_branch, compare_branch)
         
+        click.echo("Generating the pull-request, it will take a few seconds...")
         pr_content = create_pr_description(diff, repo_name, curr_branch)
         click.echo(pr_content)
         
