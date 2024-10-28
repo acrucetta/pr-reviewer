@@ -1,5 +1,5 @@
 import subprocess
-from typing import Tuple
+from typing import List, Dict
 
 def run_git_command(command: str) -> str:
     """Run a git command and return its output."""
@@ -23,6 +23,46 @@ def get_repo_name() -> str:
     """Get the name of the git repository."""
     return run_git_command("basename `git rev-parse --show-toplevel`")
 
+def get_full_file_content(filename: str, branch: str) -> str:
+    """Get the full content of a file from a specific branch."""
+    try:
+        return run_git_command(f"git show {branch}:{filename}")
+    except:
+        return ""
+
 def get_diff(current_branch: str, compare_branch: str) -> str:
-    """Get the git diff between two branches."""
-    return run_git_command(f"git diff {current_branch}..{compare_branch}")
+    """Get diff with file context between two branches."""
+    # Get list of changed files
+    changed_files = run_git_command(f"git diff --name-status {compare_branch}...{current_branch}").splitlines()
+    
+    output = []
+    
+    # Process each changed file
+    for change in changed_files:
+        status, filename = change.split(maxsplit=1)
+        
+        output.append(f"\n=== File: {filename} ===")
+        output.append(f"Status: {status}")
+        
+        if status != 'D':  # If file wasn't deleted
+            output.append("\n=== Current File Content ===")
+            output.append(get_full_file_content(filename, current_branch))
+            
+        output.append("\n=== Changes ===")
+        # Get word-diff for this specific file
+        try:
+            file_diff = run_git_command(
+                f"git diff --word-diff=plain {compare_branch}...{current_branch} -- {filename}"
+            )
+            # Make diff more readable
+            file_diff = (file_diff.replace("[-", "REMOVED:")
+                                .replace("-]", "")
+                                .replace("{+", "ADDED:")
+                                .replace("+}", ""))
+            output.append(file_diff)
+        except:
+            output.append("(New file or binary file)")
+        
+        output.append("\n" + "="*50)
+    
+    return "\n".join(output)
