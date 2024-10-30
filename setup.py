@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     # Basic package information
     name="git_pr_generator",     # The name pip uses to install your package
-    version="0.2.1",            # Package version (semantic versioning recommended)
+    version="0.2.2",            # Package version (semantic versioning recommended)
     description="A tool to make pull-requests",
     long_description=open("README.md").read(),  # Your README.md content
     long_description_content_type="text/markdown",
